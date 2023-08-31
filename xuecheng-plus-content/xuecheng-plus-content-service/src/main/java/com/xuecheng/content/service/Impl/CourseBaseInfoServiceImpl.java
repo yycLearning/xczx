@@ -10,6 +10,7 @@ import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
+import com.xuecheng.content.model.dto.EditCourseDTO;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseCategory;
@@ -61,7 +62,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     @Override
     public CourseBaseInfoDto createCourseBase(Long companyID, AddCourseDto dto) {
         //Validity Check Of Parameters
-        if (StringUtils.isBlank(dto.getName())) {
+        /*if (StringUtils.isBlank(dto.getName())) {
             throw new XueChengPlusException("课程名称为空");
         }
 
@@ -87,7 +88,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         if (StringUtils.isBlank(dto.getCharge())) {
             throw new RuntimeException("收费规则为空");
-        }
+        }*/
 
 
         CourseBase courseBaseNew = new CourseBase();
@@ -104,10 +105,13 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         BeanUtils.copyProperties(dto,courseMarket);
         courseMarket.setId(courseBaseNew.getId());
         int result = saveCourseMarket(courseMarket);
-        CourseBaseInfoDto courseBaseInfo = getCourseBaseInfo(courseBaseNew.getId());
+        CourseBaseInfoDto courseBaseInfo =getCourseBaseInfoByID(courseBaseNew.getId());
         return courseBaseInfo;
     }
-    public CourseBaseInfoDto getCourseBaseInfo(long courseID){
+
+
+
+    public CourseBaseInfoDto getCourseBaseInfoByID(Long courseID){
         CourseBaseInfoDto courseBaseInfoDto = new CourseBaseInfoDto();
         CourseBase courseBase = courseBaseMapper.selectById(courseID);
         if(courseBase==null){
@@ -122,6 +126,30 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         return courseBaseInfoDto;
     }
+
+    @Override
+    public CourseBaseInfoDto updateCourseBase(Long companyID, EditCourseDTO editCourseDTO) {
+        Long courseId = editCourseDTO.getId();
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if(courseBase==null){
+            XueChengPlusException.cast("course not exist");
+        }
+
+        if(!companyID.equals(courseBase.getCompanyId())){
+            XueChengPlusException.cast("just can modify yourself course");
+        }
+        BeanUtils.copyProperties(editCourseDTO,courseBase);
+        courseBase.setChangeDate(LocalDateTime.now());
+
+        int result = courseBaseMapper.updateById(courseBase);
+        if(result<=0){
+            XueChengPlusException.cast("failed to modify course");
+        }
+
+        CourseBaseInfoDto courseBaseInfoByID = getCourseBaseInfoByID(courseId);
+        return courseBaseInfoByID;
+    }
+
     private int saveCourseMarket(CourseMarket courseMarket){
         String charge = courseMarket.getCharge();
         if(StringUtils.isEmpty(charge)){

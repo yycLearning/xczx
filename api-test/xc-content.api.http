@@ -32,3 +32,10 @@ Content-Type: application/json
   "grade": "204001",
   "description": "sdada"
 }
+
+### course query
+GET {{content_host}}/content/course/40
+Content-Type: application/json
+
+### teach plan query
+GET {{content_host}}/content/teachplan/117/tree-nodes

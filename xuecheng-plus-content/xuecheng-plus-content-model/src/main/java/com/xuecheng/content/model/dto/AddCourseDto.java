@@ -1,5 +1,6 @@
 package com.xuecheng.content.model.dto;
 
+import com.xuecheng.base.exception.ValidationGroup;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,7 +19,9 @@ import java.math.BigDecimal;
 @ApiModel(value="AddCourseDto", description="新增课程基本信息")
 public class AddCourseDto {
 
- @NotEmpty(message = "课程名称不能为空")
+ //@NotEmpty(message = "课程名称不能为空")
+ @NotEmpty(message = "name of adding course can not be empty",groups = {ValidationGroup.Insert.class})
+ @NotEmpty(message = "name of updating course can not be empty",groups = {ValidationGroup.Update.class})
  @ApiModelProperty(value = "课程名称", required = true)
  private String name;
 
@@ -45,6 +48,7 @@ public class AddCourseDto {
  @ApiModelProperty(value = "教学模式（普通，录播，直播等）", required = true)
  private String teachmode;
 
+ @Size(message = "Too few course description",min = 10)
  @ApiModelProperty(value = "课程介绍")
  private String description;
 
