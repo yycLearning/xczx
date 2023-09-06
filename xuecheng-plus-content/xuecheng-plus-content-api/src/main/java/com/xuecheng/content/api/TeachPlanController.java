@@ -1,5 +1,6 @@
 package com.xuecheng.content.api;
 
+import com.xuecheng.content.model.dto.BindTeachPlanMediaDto;
 import com.xuecheng.content.model.dto.SaveTeachplanDTO;
 import com.xuecheng.content.model.dto.TeachPlanDTO;
 import com.xuecheng.content.service.TeachplanService;
@@ -32,5 +33,22 @@ public class TeachPlanController {
     public void saveTeachplan(@RequestBody @Validated SaveTeachplanDTO saveTeachplanDTO){
          teachplanService.saveTeachplan(saveTeachplanDTO);
 
+    }
+    @ApiOperation("CoursePlan deletion")
+    @DeleteMapping("/teachplan/{courseId}")
+    public void deleteTeachplan(@PathVariable Long courseId){
+        teachplanService.deleteTeachPlan(courseId);
+    }
+    @PostMapping("/teachplan/movedown/{id}")
+    public void movedown(@PathVariable Long id){
+        teachplanService.movedown(id);
+    }
+    @PostMapping("/teachplan/moveup/{id}")
+    public void moveup(@PathVariable Long id){
+        teachplanService.moveup(id);
+    }
+    @PostMapping("teachplan/association/media")
+    public void associationMedia(@RequestBody BindTeachPlanMediaDto bindTeachPlanMediaDto){
+        teachplanService.associationMedia(bindTeachPlanMediaDto);
     }
 }
