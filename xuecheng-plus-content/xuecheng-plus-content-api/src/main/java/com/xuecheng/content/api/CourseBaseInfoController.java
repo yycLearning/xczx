@@ -9,9 +9,11 @@ import com.xuecheng.content.model.dto.EditCourseDTO;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseInfoService;
+import com.xuecheng.content.util.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +52,10 @@ public class CourseBaseInfoController {
     @ApiOperation("Query course by courseId")
     @GetMapping("/course/{courseid}")
     public CourseBaseInfoDto getCourseById(@PathVariable Long courseid){
+        /*//get current client info:
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(principal);*/
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
         CourseBaseInfoDto courseBaseInfoByID = courseBaseInfoService.getCourseBaseInfoByID(courseid);
         return courseBaseInfoByID;
     }
@@ -57,9 +63,10 @@ public class CourseBaseInfoController {
     @ApiOperation("update course")
     @PutMapping("/course")
     public CourseBaseInfoDto modifyCourseBase(@RequestBody @Validated({ValidationGroup.Insert.class}) EditCourseDTO editCourseDTO){
-        Long companyId = 1232141425L;
-
-        CourseBaseInfoDto courseBaseInfoDto = courseBaseInfoService.updateCourseBase(companyId, editCourseDTO);
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        String companyId = user.getCompanyId();
+        long companyId2 = Long.parseLong(companyId);
+        CourseBaseInfoDto courseBaseInfoDto = courseBaseInfoService.updateCourseBase(companyId2, editCourseDTO);
         return courseBaseInfoDto;
 
     }

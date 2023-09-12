@@ -36,6 +36,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     @Autowired
     private CourseCategoryMapper courseCategoryMapper;
 
+
     @Override
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto courseParamsDto) {
 
@@ -123,6 +124,14 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         }
         BeanUtils.copyProperties(courseBase,courseBaseInfoDto);
         BeanUtils.copyProperties(courseMarket,courseBaseInfoDto);
+
+        CourseCategory courseCategory = courseCategoryMapper.selectById(courseBase.getMt());
+        String MtName = courseCategory.getName();
+        courseBaseInfoDto.setMt(MtName);
+
+        CourseCategory courseCategory2 = courseCategoryMapper.selectById(courseBase.getSt());
+        String stName = courseCategory2.getName();
+        courseBaseInfoDto.setSt(stName);
 
         return courseBaseInfoDto;
     }

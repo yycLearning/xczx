@@ -86,7 +86,7 @@ public class MediaFileServiceImpl implements MediaFileService {
     }
 
     @Override
-    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamDTO uploadFileParamDTO, String localFilePath) {
+    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamDTO uploadFileParamDTO, String localFilePath,String objectname) {
 
         String filename = uploadFileParamDTO.getFilename();
         String extensionString = filename.substring(filename.lastIndexOf("."));
@@ -94,7 +94,9 @@ public class MediaFileServiceImpl implements MediaFileService {
 
         String defaultFolderPath = getDefaultFolderPath();
         String fileMD5 = getFileMD5(new File(localFilePath));
-        String objectname = defaultFolderPath+fileMD5+extensionString;
+        if(StringUtils.isEmpty(objectname)) {
+            objectname = defaultFolderPath + fileMD5 + extensionString;
+        }
 
 
         boolean result = addMediaFilesToMinio(localFilePath, mimeType, bucket_mediafiles, objectname);
@@ -271,6 +273,12 @@ public class MediaFileServiceImpl implements MediaFileService {
             log.error("error upload file,bucket{},objectname{},error message:{}",bucket,objectname,e.getMessage());
         }
         return false;
+    }
+
+    @Override
+    public MediaFiles getFileById(String mediaId) {
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(mediaId);
+        return mediaFiles;
     }
 
     private  String getMimeType(String extension) {
