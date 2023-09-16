@@ -38,7 +38,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
 
     @Override
-    public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto courseParamsDto) {
+    public PageResult<CourseBase> queryCourseBaseList(Long companyId,PageParams pageParams, QueryCourseParamsDto courseParamsDto) {
 
         LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
         //Fuzzy query based on name, splicing in sql:course_base.name like '%value%'
@@ -49,6 +49,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         queryWrapper.eq(StringUtils.isNotEmpty(courseParamsDto.getPublishStatus()),CourseBase::getStatus,courseParamsDto.getPublishStatus());
         //the object of pagination parameters
 
+        queryWrapper.eq(CourseBase::getCompanyId,companyId);
 
         //creating object of PAGE pagination parameters, parameters:currentPage, PageSize
         Page<CourseBase> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
@@ -154,6 +155,9 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         if(result<=0){
             XueChengPlusException.cast("failed to modify course");
         }
+        CourseMarket courseMarket = new CourseMarket();
+        BeanUtils.copyProperties(editCourseDTO,courseMarket);
+        saveCourseMarket(courseMarket);
 
         CourseBaseInfoDto courseBaseInfoByID = getCourseBaseInfoByID(courseId);
         return courseBaseInfoByID;

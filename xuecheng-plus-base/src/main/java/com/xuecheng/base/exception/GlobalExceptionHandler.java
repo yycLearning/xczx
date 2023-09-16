@@ -30,6 +30,9 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public RestErrorResponse exception(Exception e){
         log.error("systemException{}",e);
+        if(e.getMessage().equals("不允许访问")){
+            return new RestErrorResponse("No permission on your account");
+        }
         RestErrorResponse restErrorResponse = new RestErrorResponse(CommonError.UNKOWN_ERROR.getErrMessage());
         return restErrorResponse;
     }

@@ -9,7 +9,7 @@ import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 
 public interface CourseBaseInfoService {
-    public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto courseParamsDto);
+    public PageResult<CourseBase> queryCourseBaseList(Long companyID,PageParams pageParams, QueryCourseParamsDto courseParamsDto);
 
     public CourseBaseInfoDto createCourseBase(Long companyID, AddCourseDto addCourseDto);
     public CourseBaseInfoDto getCourseBaseInfoByID(Long courseid);
